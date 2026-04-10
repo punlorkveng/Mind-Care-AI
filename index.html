@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mind Care AI</title>
+
+    <style>
+        body {
+            background-color: #ffe6f0;
+            font-family: Arial;
+            display: flex;
+            justify-content: center;
+        }
+
+        .chat-container {
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 20px;
+            padding: 15px;
+            margin-top: 50px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        #chatBox {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+
+        .user, .ai {
+            padding: 8px;
+            margin: 5px;
+            border-radius: 10px;
+            max-width: 70%;
+        }
+
+        .user {
+            background: #ffb3d9;
+            text-align: right;
+            margin-left: auto;
+        }
+
+        .ai {
+            background: #f2f2f2;
+        }
+
+        .input-area {
+            display: flex;
+        }
+
+        input {
+            flex: 1;
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            margin-left: 5px;
+            border: none;
+            background: pink;
+            border-radius: 10px;
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        select {
+            margin-bottom: 10px;
+            width: 100%;
+            padding: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="chat-container">
+    <h2>Princess Punlork AI</h2>
+
+    <select id="mode">
+        <option value="care">Care Mode</option>
+        <option value="funny">Funny Mode</option>
+        <option value="cold">Cold Mode</option>
+    </select>
+
+    <div id="chatBox">
+        <div class="ai">Hi… I’m Princess Punlork. I’ll stay with you. What’s on your mind?</div>
+    </div>
+
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="Say something...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<script>
+
+let memory = [];
+
+function sendMessage() {
+    let input = document.getElementById("userInput").value;
+    let chatBox = document.getElementById("chatBox");
+
+    if(input === "") return;
+
+    chatBox.innerHTML += `<div class="user">${input}</div>`;
+    document.getElementById("userInput").value = "";
+
+    // typing effect
+    let typing = document.createElement("div");
+    typing.className = "ai";
+    typing.innerText = "Typing...";
+    chatBox.appendChild(typing);
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    setTimeout(() => {
+        typing.remove();
+        let response = getAIResponse(input);
+        chatBox.innerHTML += `<div class="ai">${response}</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }, 1000);
+}
+
+function getAIResponse(message) {
+    let mode = document.getElementById("mode").value;
+
+    memory.push(message);
+
+    if(mode === "care") {
+        if(message.toLowerCase().includes("sad")) {
+            return "Hey… come here. Tell me what’s making you feel like this.";
+        }
+        return "I’m listening. You can tell me anything.";
+    }
+
+    if(mode === "funny") {
+        return "Wait… are you serious right now or just being dramatic?";
+    }
+
+    if(mode === "cold") {
+        return "Hmm. Continue.";
+    }
+}
+
+</script>
+
+</body>
+</html>
