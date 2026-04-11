@@ -5,150 +5,426 @@
 
     <style>
         body {
-            background-color: #ffe6f0;
-            font-family: Arial;
+            background: linear-gradient(135deg, #ffe6f0 0%, #e6f3ff 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
         }
 
         .chat-container {
-            width: 350px;
-            height: 500px;
-            background: white;
-            border-radius: 20px;
-            padding: 15px;
-            margin-top: 50px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 380px;
+            height: 600px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 20px;
+            margin: 20px auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         h2 {
             text-align: center;
+            color: #ff6b9d;
+            margin: 0 0 15px 0;
+            font-size: 24px;
+            font-weight: 600;
         }
 
         #chatBox {
             flex: 1;
             overflow-y: auto;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            padding-right: 5px;
         }
 
         .user, .ai {
-            padding: 8px;
-            margin: 5px;
-            border-radius: 10px;
-            max-width: 70%;
+            padding: 12px 16px;
+            margin: 8px 0;
+            border-radius: 18px;
+            max-width: 75%;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease-in;
+            line-height: 1.4;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .user {
-            background: #ffb3d9;
+            background: linear-gradient(135deg, #ff9a9e, #fecfef);
+            color: #333;
             text-align: right;
             margin-left: auto;
+            border-bottom-right-radius: 4px;
         }
 
         .ai {
-            background: #f2f2f2;
+            background: linear-gradient(135deg, #f8f9ff, #e8f4f8);
+            color: #2c3e50;
+            border-bottom-left-radius: 4px;
+            position: relative;
+        }
+
+        .ai::before {
+            content: '🐰';
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+        }
+
+        .ai .text {
+            margin-left: 25px;
         }
 
         .input-area {
             display: flex;
+            gap: 10px;
         }
 
         input {
             flex: 1;
-            padding: 8px;
-            border-radius: 10px;
-            border: 1px solid #ccc;
+            padding: 12px 16px;
+            border-radius: 20px;
+            border: 2px solid #f0f0f0;
+            outline: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #ff6b9d;
+            box-shadow: 0 0 0 3px rgba(255, 107, 157, 0.1);
         }
 
         button {
-            margin-left: 5px;
             border: none;
-            background: pink;
-            border-radius: 10px;
-            padding: 8px;
+            background: linear-gradient(135deg, #ff6b9d, #ff8fab);
+            color: white;
+            border-radius: 20px;
+            padding: 12px 20px;
             cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.4);
         }
 
         select {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             width: 100%;
-            padding: 5px;
+            padding: 10px;
+            border-radius: 15px;
+            border: 2px solid #f0f0f0;
+            background: white;
+            font-size: 14px;
+        }
+
+        .typing {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .typing-dots {
+            display: inline-flex;
+            margin-left: 5px;
+        }
+
+        .typing-dots span {
+            height: 8px;
+            width: 8px;
+            background: #bdc3c7;
+            border-radius: 50%;
+            margin: 0 2px;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
         }
     </style>
 </head>
 
 <body>
-
 <div class="chat-container">
-    <h2>Bunny AI</h2>
+    <h2>🐰 Bunny</h2>
 
     <select id="mode">
-        <option value="care">Care Mode</option>
-        <option value="funny">Funny Mode</option>
-        <option value="cold">Cold Mode</option>
+        <option value="care">💕 Care Mode</option>
+        <option value="funny">😂 Funny Mode</option>
+        <option value="cold">❄️ Cold Mode</option>
+        <option value="friend">👯 Friend Mode</option>
     </select>
 
     <div id="chatBox">
-        <div class="ai">Hi… I’m Bunny. I’ll stay with you. What’s on your mind?</div>
+        <div class="ai"><span class="text">Hey... I'm Bunny 🐰<br>What's going on with you today?</span></div>
     </div>
 
     <div class="input-area">
-        <input type="text" id="userInput" placeholder="Say something...">
+        <input type="text" id="userInput" placeholder="What's on your mind..." onkeypress="handleKeyPress(event)">
         <button onclick="sendMessage()">Send</button>
     </div>
 </div>
 
 <script>
-
 let memory = [];
+let bunnyMood = { happy: 50, tired: 20, caring: 70 };
+let lastResponses = [];
+
+const responses = {
+    care: {
+        greetings: ["Hey... I'm here", "Hi sweetheart", "Hey you"],
+        sad: [
+            "Oh no... come here, tell me everything",
+            "That sounds really tough... want to talk about it?",
+            "I'm so sorry you're feeling this way... I'm listening 💕"
+        ],
+        tired: [
+            "You sound exhausted... have you been resting?",
+            "Rough day? Take a deep breath with me...",
+            "I get it. Sometimes everything just feels heavy."
+        ],
+        happy: [
+            "Aww that's so sweet! I'm smiling now 🥰",
+            "Yay! I love hearing you're happy!",
+            "Your happiness is contagious! ✨"
+        ],
+        default: [
+            "I'm listening... you can tell me anything",
+            "Hmm... tell me more about that",
+            "I get what you're saying...",
+            "That makes sense. What happened next?",
+            "I feel you on that..."
+        ]
+    },
+    funny: {
+        greetings: ["Yo what's good?", "Sup drama queen?", "Hey trouble 👀"],
+        sad: [
+            "Mood: eternal raincloud ☔😂",
+            "Wanna cry? I'll bring tissues AND memes",
+            "Drama level: 100. Spill the tea ☕"
+        ],
+        default: [
+            "Lmao what even-",
+            "You're killing me 😂",
+            "This is why we can't have nice things",
+            "Bold of you to assume I care *jk*",
+            "The audacity- 💀"
+        ]
+    },
+    cold: {
+        greetings: ["...", "What.", "Speak."],
+        default: [
+            "Continue.",
+            "And?",
+            "Go on.",
+            "Noted.",
+            "Hm."
+        ]
+    },
+    friend: {
+        greetings: ["Hey bestie!", "What's up buttercup?", "Missed you!"],
+        default: [
+            "OMG same!!",
+            "No way, tell me more!",
+            "You're so right about that",
+            "I feel this in my soul",
+            "We've all been there 🙌"
+        ]
+    }
+};
 
 function sendMessage() {
-    let input = document.getElementById("userInput").value;
+    let input = document.getElementById("userInput").value.trim();
     let chatBox = document.getElementById("chatBox");
 
-    if(input === "") return;
+    if (input === "") return;
 
-    chatBox.innerHTML += `<div class="user">${input}</div>`;
+    // Add user message
+    chatBox.innerHTML += `<div class="user">${escapeHtml(input)}</div>`;
     document.getElementById("userInput").value = "";
+    
+    memory.push({ user: input, timestamp: Date.now() });
+    if (memory.length > 10) memory.shift();
 
-    // typing effect
-    let typing = document.createElement("div");
-    typing.className = "ai";
-    typing.innerText = "Typing...";
-    chatBox.appendChild(typing);
+    // Show typing indicator
+    showTyping(chatBox);
 
-    chatBox.scrollTop = chatBox.scrollHeight;
-
+    // Generate response after delay (human-like timing)
     setTimeout(() => {
-        typing.remove();
-        let response = getAIResponse(input);
-        chatBox.innerHTML += `<div class="ai">${response}</div>`;
+        removeTyping(chatBox);
+        let response = getHumanLikeResponse(input);
+        chatBox.innerHTML += `<div class="ai"><span class="text">${response}</span></div>`;
         chatBox.scrollTop = chatBox.scrollHeight;
-    }, 1000);
+        
+        // Update bunny mood based on conversation
+        updateBunnyMood(input);
+    }, getRandomDelay());
 }
 
-function getAIResponse(message) {
+function getHumanLikeResponse(message) {
     let mode = document.getElementById("mode").value;
+    let lowerMsg = message.toLowerCase();
+    
+    lastResponses.push(message);
+    if (lastResponses.length > 5) lastResponses.shift();
 
-    memory.push(message);
+    // Context awareness
+    let contextResponse = getContextResponse(lowerMsg, mode);
+    if (contextResponse) return contextResponse;
 
-    if(mode === "care") {
-        if(message.toLowerCase().includes("sad")) {
-            return "Hey… come here. Tell me what’s making you feel like this.";
+    // Personality injection
+    let personalityResponses = responses[mode].default;
+    
+    // Vary responses based on recent conversation
+    if (hasRecentKeyword(lowerMsg, ['love', 'like', 'cute'])) {
+        personalityResponses = responses[mode].happy || responses[mode].default;
+    }
+    
+    // Human-like repetition avoidance
+    let usedResponses = [];
+    personalityResponses.forEach(resp => {
+        if (!lastResponses.some(prev => prev.includes(resp.slice(0, 20)))) {
+            usedResponses.push(resp);
         }
-        return "I’m listening. You can tell me anything.";
-    }
+    });
 
-    if(mode === "funny") {
-        return "Wait… are you serious right now or just being dramatic?";
-    }
+    let response = usedResponses.length > 0 
+        ? usedResponses[getRandomInt(0, usedResponses.length - 1)]
+        : personalityResponses[getRandomInt(0, personalityResponses.length - 1)];
 
-    if(mode === "cold") {
-        return "Hmm. Continue.";
+    // Add human-like imperfections
+    response = addHumanTouch(response, mode);
+    
+    return response;
+}
+
+function getContextResponse(message, mode) {
+    let lowerMsg = message.toLowerCase();
+    
+    if (lowerMsg.includes('sad') || lowerMsg.includes('hurt') || lowerMsg.includes('cry')) {
+        return responses[mode].sad ? 
+            responses[mode].sad[getRandomInt(0, responses[mode].sad.length - 1)] : 
+            "That sounds really tough... I'm here";
+    }
+    
+    if (lowerMsg.includes('tired') || lowerMsg.includes('sleepy') || lowerMsg.includes('exhaust')) {
+        return responses[mode].tired ? 
+            responses[mode].tired[getRandomInt(0, responses[mode].tired.length - 1)] : 
+            "You sound exhausted...";
+    }
+    
+    // Memory awareness
+    if (memory.length > 1) {
+        let lastMsg = memory[memory.length - 2].user.toLowerCase();
+        if (lastMsg.includes('name') && !message.toLowerCase().includes('bunny')) {
+            return "Wait, you can just call me Bunny! 🐰";
+        }
+    }
+    
+    return null;
+}
+
+function addHumanTouch(response, mode) {
+    const touches = {
+        care: ['...', '..', '💕', '🥺', 'hugs?'],
+        funny: ['😂', '💀', 'lmao', 'fr', 'sus'],
+        cold: ['.', '..', '...'],
+        friend: ['!!', '✨', 'yesss', 'omg']
+    };
+    
+    if (Math.random() < 0.3) {
+        let touch = touches[mode][getRandomInt(0, touches[mode].length - 1)];
+        if (Math.random() < 0.5 && !response.includes('...')) {
+            response = response.replace(/[.?!]$/, '') + touch;
+        }
+    }
+    
+    // Occasional typos (very subtle)
+    if (Math.random() < 0.1 && mode !== 'cold') {
+        response = response.replace(/you/g, 'u').replace(/are/g, 'r');
+    }
+    
+    return response;
+}
+
+function updateBunnyMood(message) {
+    let lowerMsg = message.toLowerCase();
+    if (lowerMsg.includes('sad') || lowerMsg.includes('bad')) {
+        bunnyMood.caring += 10;
+    } else if (lowerMsg.includes('happy') || lowerMsg.includes('good')) {
+        bunnyMood.happy += 10;
     }
 }
 
+function hasRecentKeyword(message, keywords) {
+    return lastResponses.some(prev => 
+        keywords.some(keyword => prev.includes(keyword))
+    );
+}
+
+function showTyping(chatBox) {
+    let typing = document.createElement("div");
+    typing.className = "typing ai";
+    typing.innerHTML = '<span class="text">Bunny is typing</span><div class="typing-dots"><span></span><span></span><span></span></div>';
+    chatBox.appendChild(typing);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function removeTyping(chatBox) {
+    let typing = chatBox.querySelector('.typing');
+    if (typing) typing.remove();
+}
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getRandomDelay() {
+    // Human typing speed: 1-4 seconds
+    return 1200 + Math.random() * 2800;
+}
+
+function escapeHtml(text) {
+    return text.replace(/[&<>"']/g, function(match) {
+        return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[match];
+    });
+}
+
+function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+        sendMessage();
+    }
+}
+
+document.getElementById("mode").addEventListener("change", function() {
+    lastResponses = [];
+});
 </script>
 
 </body>
